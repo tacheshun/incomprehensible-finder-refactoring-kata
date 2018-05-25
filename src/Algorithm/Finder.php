@@ -6,7 +6,7 @@ namespace CodelyTV\FinderKata\Algorithm;
 
 final class Finder
 {
-    /** @var Thing[] */
+    /** @var Person[] */
     private $_p;
 
     public function __construct(array $p)
@@ -14,16 +14,16 @@ final class Finder
         $this->_p = $p;
     }
 
-    public function find(int $ft): F
+    public function find(int $ft): PersonPair
     {
-        /** @var F[] $tr */
+        /** @var PersonPair[] $tr */
         $tr = [];
 
         for ($i = 0; $i < count($this->_p); $i++) {
             for ($j = $i + 1; $j < count($this->_p); $j++) {
-                $r = new F();
+                $r = new PersonPair();
 
-                if ($this->_p[$i]->birthDate < $this->_p[$j]->birthDate) {
+                if ($this->_p[$i]->getBirthDate() < $this->_p[$j]->getBirthDate()) {
                     $r->p1 = $this->_p[$i];
                     $r->p2 = $this->_p[$j];
                 } else {
@@ -31,29 +31,29 @@ final class Finder
                     $r->p2 = $this->_p[$i];
                 }
 
-                $r->d = $r->p2->birthDate->getTimestamp()
-                    - $r->p1->birthDate->getTimestamp();
+                $r->birthDaysDistanceInSeconds = $r->p2->getBirthDate()->getTimestamp()
+                    - $r->p1->getBirthDate()->getTimestamp();
 
                 $tr[] = $r;
             }
         }
 
         if (count($tr) < 1) {
-            return new F();
+            return new PersonPair();
         }
 
         $answer = $tr[0];
 
         foreach ($tr as $result) {
             switch ($ft) {
-                case FT::ONE:
-                    if ($result->d < $answer->d) {
+                case Criteria::ONE:
+                    if ($result->birthDaysDistanceInSeconds < $answer->birthDaysDistanceInSeconds) {
                         $answer = $result;
                     }
                     break;
 
-                case FT::TWO:
-                    if ($result->d > $answer->d) {
+                case Criteria::TWO:
+                    if ($result->birthDaysDistanceInSeconds > $answer->birthDaysDistanceInSeconds) {
                         $answer = $result;
                     }
                     break;
